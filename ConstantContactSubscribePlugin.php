@@ -22,4 +22,19 @@ class ConstantContactSubscribePlugin extends BasePlugin
     {
         return 'http://ShankxWebDev.com';
     }
+
+    protected function defineSettings()
+    {
+      return array(
+           'constantContactApiKey'      => array(AttributeType::String, 'default' => ''),
+           'constantContactAccessToken'      => array(AttributeType::String, 'default' => '')
+      );
+    }
+
+    public function getSettingsHtml()
+    {
+       return craft()->templates->render('constantcontactsubscribe/settings', array(
+           'settings' => $this->getSettings()
+       ));
+   }
 }
