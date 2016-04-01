@@ -26,9 +26,9 @@ class ConstantContactSubscribePlugin extends BasePlugin
   protected function defineSettings()
   {
     return array(
-      'constantContactApiKey'  => array(AttributeType::String, 'default' => ''),
-      'constantContactAccessToken' => array(AttributeType::String, 'default' => ''),
-      'constantContactList'  => array(AttributeType::String, 'default' => '')
+      'constantContactApiKey'  => array(AttributeType::String,'required' => true),
+      'constantContactAccessToken' => array(AttributeType::String,'required' => true),
+      'constantContactList'  => array(AttributeType::String,'required' => true)
     );
   }
 
