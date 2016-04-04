@@ -12,7 +12,6 @@ class ConstantContactSubscribe_ListController extends BaseController
   {
     // Get post variables - returns 400 if email not provided
     $addEmail = craft()->request->getRequiredParam('addEmail');
-    $redirect = craft()->request->getParam('redirect', '');
 
     // Get plugin settings
     $settings = $this->_init_settings();
@@ -49,12 +48,11 @@ class ConstantContactSubscribe_ListController extends BaseController
         * See: http://developer.constantcontact.com/docs/contacts-api/contacts-index.html#opt_in
         */
         $returnContact = $cc->contactService->addContact(ACCESS_TOKEN, $contact, true);
-        $this->_setMessage(200, $addEmail, $returnContact, "Subscribed successfully", true, $redirect);
+        $this->_setMessage(201, $addEmail, $returnContact, "Subscribed successfully", true);
 
         // Respond that the user already exists on the list
       } elseif (!empty($response->results)) {
-        $vars['results'] = $response->results;
-        $this->_setMessage(200, $addEmail, $vars, "The email address passed already exists on this list.", true, $redirect);
+        $this->_setMessage(422, $addEmail, "The email address passed already exists on this list.",  true);
       } else {
         $e = new CtctException();
         $e->setErrors(array("type", "Contact type not returned"));
@@ -62,10 +60,7 @@ class ConstantContactSubscribe_ListController extends BaseController
       }
       // catch any exceptions thrown during the process and print the errors to screen
     } catch (CtctException $ex) {
-      echo '<span class="label label-important">Error ' . $action . '</span>';
-      echo '<div class="container alert-error"><pre class="failure-pre">';
-      print_r($ex->getErrors());
-      echo '</pre></div>';
+      $this->_setMessage(400, $addEmail, $ex->getErrors(), false);
       die();
     }
   }
@@ -82,34 +77,15 @@ class ConstantContactSubscribe_ListController extends BaseController
   *
   * @author Martin Blackburn
   */
-  private function _setMessage($errorcode, $email, $vars, $message = '', $success = false, $redirect = '')
+
+  private function _setMessage($responseCode, $email, $message = '', $success = false)
   {
     if (craft()->request->isAjaxRequest()) {
       return $this->returnJson(array(
         'success' => $success,
-        'errorCode' => $errorcode,
+        'responseCode' => $responseCode,
         'message' => $message,
-        'values' => array(
-          'email' => $email,
-          'vars' => $vars
-        )
-      ));
-    }
-
-    if ($redirect!='') {
-      // if a redirect url was set in template form, redirect to this
-      $this->redirectToPostedUrl();
-    } else {
-      craft()->urlManager->setRouteVariables(array(
-        'constantContactSubscribe' => array(
-          'success' => $success,
-          'errorCode' => $errorcode,
-          'message' => $message,
-          'values' => array(
-            'email' => $email,
-            'vars' => $vars
-          )
-        )
+          'email' => $email
       ));
     }
   }
