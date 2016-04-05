@@ -8,6 +8,7 @@ use Ctct\Exceptions\CtctException;
 
 class ConstantContactSubscribe_ListController extends BaseController
 {
+  protected $allowAnonymous = true;
   public function actionSubscribe()
   {
     // Get post variables - returns 400 if email not provided
@@ -48,7 +49,9 @@ class ConstantContactSubscribe_ListController extends BaseController
         * See: http://developer.constantcontact.com/docs/contacts-api/contacts-index.html#opt_in
         */
         $returnContact = $cc->contactService->addContact(ACCESS_TOKEN, $contact, true);
-        $this->_setMessage(201, $addEmail, $returnContact, "Subscribed successfully", true);
+        if (!empty($returnContact)) {
+          $this->_setMessage(201, $addEmail, "Subscribed successfully", true);
+        }
 
         // Respond that the user already exists on the list
       } elseif (!empty($response->results)) {
