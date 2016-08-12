@@ -15,9 +15,10 @@ Developers can use the built-in functionality to get lists in one of the SDKs. T
 As a hack, you can create a signup form using Constant Contact's form generator and then inspect the embeddable HTML snippet which will reveal the list id.
 
 ##Installation
-1. Clone this repository into your plugin directory.
-2. Go to Settings > System > Plugins and install _Contant Contact Subscribe_.
-3. Click on the _cog icon_ to get to the plugin's settings page and enter all the required information.
+1. Vendor files require PHP version 5.5 or higher
+2. Clone this repository into your plugin directory.
+3. Go to Settings > System > Plugins and install _Contant Contact Subscribe_.
+4. Click on the _cog icon_ to get to the plugin's settings page and enter all the required information.
 
 ##Response codes
 After submitting using AJAX, the plugin returns an object that contains the following response codes:
