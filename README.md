@@ -37,7 +37,7 @@ After submitting using AJAX, the plugin returns an object that contains the foll
 
 # Example
 
-This plugin is intended to be used in combination with a [Guest Entry](https://github.com/craftcms/guest-entries) form, so the fields are formatted appropriately for that.
+This plugin was updated to be used in combination with a [Guest Entry](https://github.com/craftcms/guest-entries) form, so the fields are formatted appropriately for that.
 
 ## HTML
 The HTML below assumes that css rules hide the elements of `data-type:"message"` until one of them is made visible using jQuery based on the returned response code by adding the class `is-visible` to a given element.
@@ -75,11 +75,11 @@ The HTML below assumes that css rules hide the elements of `data-type:"message"`
 </form>
 
 <div class="form-response response-success">
-	<p>Thanks! You've been added to the {{entry.constantContactList.name}} list.</p>
+  <p>Thanks! You've been added to the {{entry.constantContactList.name}} list.</p>
 </div>
 
 <div class="form-response response-error">
-	<p>Looks like there is a problem. Check the format of your email address.</p>
+  <p>Looks like there is a problem. Check the format of your email address.</p>
 </div>
 
 ```
@@ -99,20 +99,19 @@ The HTML below assumes that css rules hide the elements of `data-type:"message"`
     }
   });
 
-	$form.submit(function(event){
-		$.ajax({
+  $form.submit(function(event){
+    $.ajax({
       type: 'POST',
       url: '/actions/constantContactSubscribe/list/Subscribe',
-			data: $('form').serialize(),
-			complete: function(data){
-				// Handle the complete event
-				if (data.responseJSON.responseCode == 201){
-					$('.cd-response-success').addClass('is-visible');
-				} else {
-					$('.cd-response-error').addClass('is-visible');
-				}
-			}
-		});
-		event.preventDefault();
-	});
+      data: $('form').serialize(),
+      complete: function(data){
+	if (data.responseJSON.responseCode == 201){
+	  $('.cd-response-success').addClass('is-visible');
+	} else {
+	  $('.cd-response-error').addClass('is-visible');
+	}
+      }
+    });
+    event.preventDefault();
+  });
 ```
