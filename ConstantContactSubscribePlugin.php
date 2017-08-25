@@ -38,4 +38,11 @@ class ConstantContactSubscribePlugin extends BasePlugin
       'settings' => $this->getSettings()
     ));
   }
+
+  public function prepSettings($settings)
+  {
+      // Clear the cached forms list when the API settings are updated
+      craft()->cache->delete('ConstantContactLists');
+      return $settings;
+  }
 }
