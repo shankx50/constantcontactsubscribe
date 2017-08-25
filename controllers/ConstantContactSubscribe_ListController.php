@@ -1,5 +1,6 @@
 <?php
 namespace Craft;
+
 // require the autoloader
 require_once(CRAFT_PLUGINS_PATH.'constantcontactsubscribe/vendor/autoload.php');
 use Ctct\Components\Contacts\Contact;
@@ -11,14 +12,24 @@ class ConstantContactSubscribe_ListController extends BaseController
   protected $allowAnonymous = true;
   public function actionSubscribe()
   {
-    // Get post variables - returns 400 if email not provided
-    $addEmail = craft()->request->getRequiredParam('addEmail');
 
     // Get plugin settings
     $settings = $this->_init_settings();
-    $addList = $settings['constantContactList'];
     define("APIKEY", $settings['constantContactApiKey']);
     define("ACCESS_TOKEN", $settings['constantContactAccessToken']);
+
+    // Get post variables - returns 400 if email not provided
+    $addEmail = craft()->request->getRequiredPost('fields.email');
+    $addList = craft()->request->getPost('addList');
+    $first_name = craft()->request->getPost('fields.firstName');
+    $last_name = craft()->request->getPost('fields.lastName');
+
+    // If list wasn't specified, grab the default list
+    if (!$addList) {
+      $addList = $settings['constantContactList'];
+    }
+
+    ConstantContactSubscribePlugin::log($addEmail);
 
     $cc = new ConstantContact(APIKEY);
 
@@ -39,8 +50,8 @@ class ConstantContactSubscribe_ListController extends BaseController
         $contact = new Contact();
         $contact->addEmail($addEmail);
         $contact->addList($addList);
-        // $contact->first_name = $_POST['first_name'];
-        // $contact->last_name = $_POST['last_name'];
+        $contact->first_name = $first_name;
+        $contact->last_name = $last_name;
         /*
         * The third parameter of addContact defaults to false, but if this were set to true it would tell Constant
         * Contact that this action is being performed by the contact themselves, and gives the ability to
@@ -55,7 +66,34 @@ class ConstantContactSubscribe_ListController extends BaseController
 
         // Respond that the user already exists on the list
       } elseif (!empty($response->results)) {
-        $this->_setMessage(422, $addEmail, "The email address passed already exists on this list.",  true);
+
+        $action = "Updating Contact";
+        $contact = $response->results[0];
+        if ($contact instanceof Contact) {
+            $contact->addList($addList);
+            $contact->first_name = $first_name;
+            $contact->last_name = $last_name;
+            $contact->source = 'Website RSVP Form';
+            /*
+             * The third parameter of updateContact defaults to false, but if this were set to true it would tell
+             * Constant Contact that this action is being performed by the contact themselves, and gives the ability to
+             * opt contacts back in and trigger Welcome/Change-of-interest emails.
+             *
+             * See: http://developer.constantcontact.com/docs/contacts-api/contacts-index.html#opt_in
+             */
+            $returnContact = $cc->contactService->updateContact(ACCESS_TOKEN, $contact, true);
+            if (!empty($returnContact)) {
+              $this->_setMessage(201, $addEmail, "Subscribed successfully", true);
+            }
+        } else {
+            $e = new CtctException();
+            $e->setErrors(array("type", "Contact type not returned"));
+            throw $e;
+        }
+
+
+
+        //$this->_setMessage(422, $addEmail, "The email address passed already exists on this list.",  true);
       } else {
         $e = new CtctException();
         $e->setErrors(array("type", "Contact type not returned"));
