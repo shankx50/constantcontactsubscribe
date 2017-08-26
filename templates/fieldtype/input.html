@@ -1,0 +1,10 @@
+{% import "_includes/forms" as forms %}
+
+{% set config = {
+    id: name,
+    name: name,
+    value: value,
+    options: options
+} %}
+
+{{ forms.select(config) }}
