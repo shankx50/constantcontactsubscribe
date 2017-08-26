@@ -8,9 +8,19 @@ class ConstantContactSubscribePlugin extends BasePlugin
     return Craft::t('Constant Contact Subscribe');
   }
 
+  public function getDescription()
+  {
+    return 'Constant-Contact-Subscribe is a straightforward plugin for subscribing to a Constant Contact newsletter list.';
+  }
+
   function getVersion()
   {
-    return '1.0';
+    return '1.1';
+  }
+
+  public function getDocumentationUrl()
+  {
+    return 'https://github.com/shankx50/constantcontactsubscribe';
   }
 
   function getDeveloper()
@@ -41,8 +51,8 @@ class ConstantContactSubscribePlugin extends BasePlugin
 
   public function prepSettings($settings)
   {
-      // Clear the cached forms list when the API settings are updated
-      craft()->cache->delete('ConstantContactLists');
-      return $settings;
+    // Clear the cached forms list when the API settings are updated
+    craft()->cache->delete('ConstantContactLists');
+    return $settings;
   }
 }
