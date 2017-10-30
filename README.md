@@ -1,6 +1,6 @@
 # Introduction
 
-Constant-Contact-Subscribe for [CraftCMS](http://www.craftcms.com) is a straightforward plugin for subscribing to a Constant Contact newsletter list.
+Constant-Contact-Subscribe for [CraftCMS](http://www.craftcms.com) 2 is a straightforward plugin for subscribing to a Constant Contact newsletter list.
 
 ## Features:
 - Supports adding one email address to any one email list
